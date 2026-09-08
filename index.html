@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Predictive Inference Dashboard</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; --muted: #94a3b8; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { max-width: 700px; width: 100%; }
+        .card { background: var(--card); border-radius: 12px; padding: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; margin-bottom: 24px; }
+        h1 { margin-top: 0; color: var(--accent); font-size: 1.6rem; }
+        p { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+        label { display: block; margin-top: 16px; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        input { width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; box-sizing: border-box; font-size: 1rem; }
+        button { margin-top: 20px; width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--accent); color: #0f172a; font-weight: bold; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .result-box { background: #090d16; border-radius: 6px; padding: 16px; border: 1px solid #334155; font-family: monospace; white-space: pre-wrap; font-size: 0.9rem; color: #4ade80; }
+        .badge { display: inline-block; background: #0284c7; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <span class="badge">REST API Active</span>
+            <h1>AI Model Serving Dashboard</h1>
+            <p>Send JSON payloads to the Python backend inference server and view prediction results in real-time.</p>
+            
+            <label for="feature1">Feature X1 (Scale: 1.0 - 100.0)</label>
+            <input type="number" id="feature1" value="45.5" step="0.1">
+
+            <label for="feature2">Feature X2 (Scale: 1.0 - 50.0)</label>
+            <input type="number" id="feature2" value="12.3" step="0.1">
+
+            <button onclick="runInference()">Run Model Inference (JSON API)</button>
+        </div>
+
+        <div class="card">
+            <h3>API JSON Response Payload:</h3>
+            <div id="response" class="result-box">Click button above to send API request...</div>
+        </div>
+    </div>
+
+    <script>
+        async function runInference() {
+            const x1 = parseFloat(document.getElementById('feature1').value);
+            const x2 = parseFloat(document.getElementById('feature2').value);
+            
+            const payload = { x1: x1, x2: x2 };
+            document.getElementById('response').innerText = "Sending JSON POST request to API...";
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('response').innerText = "Error communicating with API backend server.";
+            }
+        }
+    </script>
+</body>
+</html>
